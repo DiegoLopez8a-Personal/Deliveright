@@ -1,0 +1,39 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Docker Image
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      SHOPIFY_API_KEY: ${{ secrets.SHOPIFY_API_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set environment variables
+        run: |
+          echo "GIT_COMMIT=${{ github.sha }}" >> $GITHUB_ENV
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        env:
+          REPO: "shopify-uat"
+          ACTION: build
+        run: ./build_functions.sh
+
+      - name: Push Docker image
+        env:
+          REPO: "shopify-uat"
+          ACTION: upload
+        run: ./build_functions.sh
+#
+#      - name: Deploy to UAT
+#        run: ./run_build_uat.sh deploy

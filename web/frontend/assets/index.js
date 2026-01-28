@@ -1,0 +1,20 @@
+export { default as notFoundImage } from "./empty-state.svg";
+export { default as logo } from "./logo.jpeg";
+
+export let activateSteps = [];
+import as1 from "./activate_steps/1.png";
+import as2 from "./activate_steps/2.png";
+import as3 from "./activate_steps/3.png";
+import as4 from "./activate_steps/4.png";
+import as5 from "./activate_steps/5.png";
+import as6 from "./activate_steps/6.png";
+import as7 from "./activate_steps/7.png";
+import as8 from "./activate_steps/8.png";
+activateSteps.push(as1);
+activateSteps.push(as2);
+activateSteps.push(as3);
+activateSteps.push(as4);
+activateSteps.push(as5);
+activateSteps.push(as6);
+activateSteps.push(as7);
+activateSteps.push(as8);

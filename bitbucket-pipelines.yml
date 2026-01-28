@@ -1,0 +1,28 @@
+image:
+  name: python:3.10
+definitions:
+  services:
+    docker:
+      memory: 7128
+pipelines:
+  branches:
+    dev:
+      - step:
+          name: Build and publish docker image.
+          size: 2x
+          services:
+            - docker
+          script:
+            - export GIT_COMMIT=${BITBUCKET_COMMIT}
+            - export BUILD_NUMBER=${BITBUCKET_BUILD_NUMBER}
+            - export SHOPIFY_API_KEY_UAT=${SHOPIFY_API_KEY_UAT}
+            - export SHOPIFY_API_KEY_PROD=${SHOPIFY_API_KEY_PROD}
+            - apt-get update && apt-get install -y jq
+            - ./run_build.sh build
+            - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscli-bundle.zip"
+            - mkdir /tmp/awscli
+            - unzip /tmp/awscli-bundle.zip -d /tmp/awscli
+            - /tmp/awscli/aws/install
+            - aws --version
+            - ./run_build.sh upload
+            - ./run_build_uat.sh deploy
