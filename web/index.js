@@ -201,6 +201,16 @@ app.post("/carrier", async (_req, res) => {
       }
     }
     console.log("Carrier POST: Responding with shipping rates"); // Logs final response
+
+    if (IDENTIFIER === "business-pleasure-co.myshopify.com") {
+      rates = rates.map((rate) => {
+        if (rate.service_code === "rocpa") {
+          return { ...rate, service_name: "White Glove Service" };
+        }
+        return rate;
+      });
+    }
+
     res.status(200).send({ rates });
   } catch (err) {
     console.error("Carrier POST: Error processing request", err); // Logs general error
