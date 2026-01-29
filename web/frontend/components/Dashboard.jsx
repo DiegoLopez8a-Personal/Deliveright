@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Main Dashboard Component
+ *
+ * The central hub of the application for authenticated users.
+ * Displays user status, carrier service alerts, settings, and quick links.
+ *
+ * Components:
+ * - PageHeader: Welcome message and user info
+ * - CarrierServiceError: Alert if carrier service is missing
+ * - LoginToGrasshopperCard: Link to external dashboard
+ * - DisplayForm: Read-only view of account settings
+ * - LinksCard: Helpful resources
+ *
+ * @module components/Dashboard
+ * @requires @shopify/polaris
+ */
+
 import {Page} from "@shopify/polaris";
 import CarrierServiceError from './carrierServiceError.jsx'
 import {logo} from '../assets/index.js'
@@ -9,6 +26,19 @@ import FadeIn from "./FadeIn.tsx";
 import { ProductsCard } from "./ProductsCard.jsx";
 import PolarisActionButton from "./PolarisActionButton.jsx";
 
+/**
+ * Dashboard Component
+ *
+ * Renders the main user interface for the app.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.user - User/Store data object
+ * @param {string} props.user.name - User name
+ * @param {boolean} props.user.carrier - Carrier service status
+ * @param {Function} props.setToastProps - Toast notification setter
+ * @returns {JSX.Element} Dashboard page
+ */
 export default function Dashboard(props) {
 	console.log(props)
 	return <Page>

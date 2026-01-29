@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Signup Form Component
+ *
+ * Provides a registration form for new users to create a Deliveright account directly
+ * from the Shopify app. Handles form validation, state management, and API submission.
+ *
+ * Key Features:
+ * - Real-time validation
+ * - US State selection
+ * - Auto-population of known data
+ * - Error handling and feedback
+ *
+ * @module components/SignUpForm
+ * @requires react
+ * @requires @shopify/polaris
+ * @requires ../hooks
+ */
+
 import {useState} from "react";
 import {
 	Card,
@@ -12,6 +30,10 @@ import PageHeader from "./PageHeader.jsx";
 import {logo} from '../assets/index.js';
 import FadeIn from "./FadeIn.tsx";
 
+/**
+ * List of US States for dropdown selection
+ * @constant {Array<Object>}
+ */
 const usStates = [
   { label: "Alabama", value: "AL" },
   { label: "Alaska", value: "AK" },
@@ -65,6 +87,22 @@ const usStates = [
   { label: "Wyoming", value: "WY" },
 ];
 
+/**
+ * Submit handler for the signup form
+ *
+ * Validates data and sends a POST request to create a new store account.
+ * Handles success notifications and error reporting.
+ *
+ * @async
+ * @function submitForm
+ * @param {Object} data - Form data
+ * @param {Function} setData - Data setter
+ * @param {Object} errors - Error state
+ * @param {Function} setErrors - Error setter
+ * @param {Function} setLoading - Loading state setter
+ * @param {Function} fetch - Authenticated fetch instance
+ * @param {Function} setToastProps - Toast notification setter
+ */
 const submitForm = async (data, setData, errors, setErrors, setLoading, fetch, setToastProps) => {
 	// Default values
 	const hardCodedData = { //TODO: needs a better logic... what is this?
@@ -114,6 +152,18 @@ const submitForm = async (data, setData, errors, setErrors, setLoading, fetch, s
 	}
 };
 
+/**
+ * Validate form data fields
+ *
+ * Checks for required fields and updates the error state object.
+ *
+ * @function formValidation
+ * @param {Object} data - Form data
+ * @param {Function} setData - Data setter
+ * @param {Object} errors - Current error state
+ * @param {Function} setErrors - Error setter
+ * @returns {Promise<boolean>} Resolves true if valid, rejects if invalid
+ */
 const formValidation = (data, setData, errors, setErrors) => {
 	setErrors({...errors, unknownError: true});
 	return new Promise((resolve, reject) => {
@@ -166,6 +216,16 @@ const formValidation = (data, setData, errors, setErrors) => {
 	});
 };
 
+/**
+ * Signup Form Component
+ *
+ * Renders the full signup page with header, form fields, and validation logic.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.setToastProps - Toast notification setter
+ * @returns {JSX.Element} Signup page
+ */
 export default function SignupForm(props) {
 	const [data, setData] = useState({
 		email: "",

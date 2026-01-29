@@ -1,3 +1,31 @@
+/**
+ * @fileoverview Order Webhook Handlers
+ *
+ * This module handles order-related webhooks from Shopify, specifically the
+ * ORDERS_FULFILLED event. It serves as the bridge between Shopify orders and
+ * the Deliveright fulfillment system.
+ *
+ * Main Workflow:
+ * 1. Receive ORDERS_FULFILLED webhook
+ * 2. Verify order contains Deliveright service level
+ * 3. Update line item locations using GraphQL
+ * 4. Filter products eligible for Deliveright
+ * 5. Create corresponding order in Deliveright system via API
+ *
+ * Key Features:
+ * - Location Sync: Updates origin location for line items based on fulfillment location
+ * - Deduplication: Prevents double-processing of orders using `processedOrders` utility
+ * - Validation: Checks if shipping code matches a configured Deliveright service level
+ *
+ * @module webhook_handlers/order
+ * @requires @shopify/shopify-api
+ * @requires ../classes/deliveright
+ * @requires ../shopify
+ *
+ * @author Deliveright Development Team
+ * @version 1.0.0
+ */
+
 import { DeliveryMethod } from "@shopify/shopify-api";
 import deliveright from "../classes/deliveright.js";
 import shopify from "../shopify.js";
@@ -5,6 +33,28 @@ import config from "../config.js";
 import filterDeliverightProducts from "../utils/filterDeliverightProducts.js";
 import { markIfNew } from "../utils/processedOrders.js";
 
+/**
+ * Update origin locations for line items in an order
+ *
+ * Fetches the actual fulfillment location from Shopify via GraphQL and updates
+ * the origin_location property of each line item in the payload. This is crucial
+ * for correct routing and shipping calculations in Deliveright.
+ *
+ * Process:
+ * 1. Iterate through successful fulfillments
+ * 2. Query Shopify GraphQL API for location details by location_id
+ * 3. Match fulfillment line items to payload line items
+ * 4. Update origin_location with address details
+ *
+ * @async
+ * @function update_line_items_location
+ * @param {Object} session - Shopify session for API authentication
+ * @param {Object} payload - Order webhook payload
+ * @param {string} payload.id - Order ID
+ * @param {Array<Object>} payload.fulfillments - List of fulfillments
+ * @param {Array<Object>} payload.line_items - List of line items to update
+ * @returns {Promise<Array>} Results of location update operations
+ */
 const update_line_items_location = async (session, payload) => {
   console.log("update_line_items_location: Starting location update for order", payload.id);
   console.log("update_line_items_location: Payload: ", payload);
@@ -84,6 +134,30 @@ const update_line_items_location = async (session, payload) => {
       })
   );
 };
+/**
+ * ORDERS_FULFILLED webhook callback handler
+ *
+ * Processes completed orders and submits them to Deliveright if eligible.
+ *
+ * Execution Flow:
+ * 1. Parse webhook payload
+ * 2. Fetch store configuration from Deliveright
+ * 3. Check if shipping method matches a Deliveright service code
+ * 4. If match:
+ *    a. Update line item locations
+ *    b. Filter for Deliveright-eligible products
+ *    c. Check for duplicate processing
+ *    d. Submit order to Deliveright API
+ * 5. If no match: Log and skip
+ *
+ * @async
+ * @function orders_fulfilled_callback
+ * @param {string} topic - Webhook topic (ORDERS_FULFILLED)
+ * @param {string} shop - Shop domain
+ * @param {string} body - Raw webhook body (JSON string)
+ * @param {string} webhookId - Unique webhook ID
+ * @returns {Promise<void>}
+ */
 const orders_fulfilled_callback = async (topic, shop, body, webhookId) => {
   console.log("orders_fulfilled_callback: Processing ORDERS_FULFILLED webhook for shop", shop); // Logs webhook processing start
   let payload = JSON.parse(body);
@@ -137,6 +211,17 @@ const orders_fulfilled_callback = async (topic, shop, body, webhookId) => {
 };
 
 export default {
+  /**
+   * Order Fulfilled Webhook Configuration
+   *
+   * Triggers when an order is marked as fulfilled in Shopify.
+   * This is the signal to send the order to Deliveright for processing.
+   *
+   * @property {Object} ORDERS_FULFILLED
+   * @property {string} ORDERS_FULFILLED.deliveryMethod - HTTP delivery
+   * @property {string} ORDERS_FULFILLED.callbackUrl - /api/webhooks
+   * @property {Function} ORDERS_FULFILLED.callback - Handler function
+   */
   ORDERS_FULFILLED: {
     deliveryMethod: DeliveryMethod.Http,
     callbackUrl: "/api/webhooks",

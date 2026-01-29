@@ -1,8 +1,27 @@
+/**
+ * @fileoverview Vite Configuration for Shopify App Frontend
+ *
+ * This module configures the Vite build tool for the React frontend.
+ * It handles development server settings, proxying requests to the backend,
+ * and defining environment variables for the frontend application.
+ *
+ * Key Configurations:
+ * - React Plugin: Enables React support including Fast Refresh
+ * - Proxy: Routes /api requests to the backend Express server
+ * - HMR: Configures Hot Module Replacement for local and cloud environments
+ * - Environment: Injects SHOPIFY_API_KEY into the frontend
+ *
+ * @module vite.config
+ * @requires vite
+ * @requires @vitejs/plugin-react
+ */
+
 import { defineConfig } from "vite";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 
+// Warn if building without API key (except in CI)
 if (
   process.env.npm_lifecycle_event === "build" &&
   !process.env.CI &&
@@ -13,6 +32,12 @@ if (
   );
 }
 
+/**
+ * Proxy configuration for backend requests
+ * Redirects API calls to the local Express server
+ *
+ * @constant {Object}
+ */
 const proxyOptions = {
   target: `http://127.0.0.1:${process.env.BACKEND_PORT}`,
   changeOrigin: false,
@@ -20,10 +45,12 @@ const proxyOptions = {
   ws: false,
 };
 
+// Determine host URL (local or cloud)
 const host = process.env.HOST
   ? process.env.HOST.replace(/https?:\/\//, "")
   : "localhost";
 
+// Configure Hot Module Replacement (HMR) based on environment
 let hmrConfig;
 if (host === "localhost") {
   hmrConfig = {
@@ -41,6 +68,9 @@ if (host === "localhost") {
   };
 }
 
+/**
+ * Export Vite configuration
+ */
 export default defineConfig({
   root: dirname(fileURLToPath(import.meta.url)),
   plugins: [react()],

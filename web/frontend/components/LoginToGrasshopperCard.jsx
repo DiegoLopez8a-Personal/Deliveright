@@ -1,5 +1,25 @@
+/**
+ * @fileoverview Grasshopper Login Card Component
+ *
+ * Provides a direct link for users to log in to the Deliveright (Grasshopper)
+ * platform. Used on the dashboard to facilitate quick access to the external
+ * management system.
+ *
+ * @module components/LoginToGrasshopperCard
+ * @requires @shopify/polaris
+ */
+
 import {Button, Card} from "@shopify/polaris";
 
+/**
+ * Login Card Component
+ *
+ * Renders a card with information and a call-to-action button
+ * pointing to the Deliveright secure login page.
+ *
+ * @component
+ * @returns {JSX.Element} Login card
+ */
 export default () => {
     return <Card
         title="Login to Your Grasshopper Account"

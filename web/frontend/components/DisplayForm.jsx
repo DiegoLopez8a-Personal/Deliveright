@@ -1,5 +1,30 @@
+/**
+ * @fileoverview Settings Display Form
+ *
+ * Renders a read-only form displaying the current Deliveright account settings.
+ * Allows users to view their configured contact info, address, and company details.
+ *
+ * @module components/DisplayForm
+ * @requires @shopify/polaris
+ */
+
 import {Card, TextField} from "@shopify/polaris";
 
+/**
+ * Display Form Component
+ *
+ * Renders a set of disabled text fields populated with user data.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.user - User data object
+ * @param {string} props.user.first_name - First name
+ * @param {string} props.user.last_name - Last name
+ * @param {string} props.user.company - Company name
+ * @param {string} props.user.email - Email address
+ * @param {Object} props.user.address - Address object
+ * @returns {JSX.Element} Settings form
+ */
 export default (props) => {
     return <div style={{width: "70%"}}>
         <Card title="Deliveright settings" sectioned>

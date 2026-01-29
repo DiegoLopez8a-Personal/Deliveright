@@ -1,6 +1,46 @@
+/**
+ * @fileoverview App Installation and Configuration Handler
+ *
+ * This module orchestrates the initial setup process when the app is installed
+ * or re-authenticated. It synchronizes the Shopify store with the Deliveright
+ * system and sets up necessary components like the carrier service.
+ *
+ * Workflow:
+ * 1. Verify store existence in Deliveright
+ * 2. Update Deliveright with new Shopify access token
+ * 3. Initialize carrier service for shipping rates
+ *
+ * @module utils/onInstallApp
+ * @requires ../classes/deliveright
+ * @requires ./createCarrier
+ *
+ * @author Deliveright Development Team
+ * @version 1.0.0
+ */
+
 import deliveright from "../classes/deliveright.js"
 import createCarrier from "./createCarrier.js"
 
+/**
+ * Perform post-installation setup tasks
+ *
+ * Called after OAuth completion to ensure the app is fully configured.
+ *
+ * Key Actions:
+ * - Syncs authentication tokens: Updates Deliveright with the new Shopify access token
+ * - Creates carrier service: Ensures shipping rates can be calculated
+ *
+ * Pre-conditions:
+ * - Valid Shopify session
+ * - Store must already exist in Deliveright (created via /api/store)
+ *
+ * @async
+ * @function onInstallApp
+ * @param {Object} session - Shopify session
+ * @param {string} session.shop - Shop domain
+ * @param {string} session.accessToken - API access token
+ * @returns {Promise<void>}
+ */
 export default async function onInstallApp(session) {
     console.log("onInstallApp: Starting app installation for shop", session.shop); // Logs start of app installation
     const {shop, accessToken} = session

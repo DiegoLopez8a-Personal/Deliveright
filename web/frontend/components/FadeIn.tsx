@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Fade In Animation Container
+ *
+ * A reusable component that orchestrates a staggered fade-in animation
+ * for its children. Useful for revealing lists, grids, or dashboard widgets
+ * in a smooth, polished manner.
+ *
+ * Features:
+ * - Staggered entrance for multiple children
+ * - Configurable delay and duration
+ * - Custom wrapper tags (div, ul, etc.)
+ * - Optional visibility control
+ *
+ * @module components/FadeIn
+ * @requires react
+ */
+
 import {
     JSXElementConstructor,
     PropsWithChildren,
@@ -6,6 +23,19 @@ import {
     Children
 } from "react";
 
+/**
+ * FadeIn Component Props
+ *
+ * @interface Props
+ * @property {number} [delay=50] - Delay between each child's appearance (ms)
+ * @property {number} [transitionDuration=400] - Duration of fade animation (ms)
+ * @property {JSXElementConstructor<any>} [wrapperTag="div"] - HTML tag for parent
+ * @property {JSXElementConstructor<any>} [childTag="div"] - HTML tag for children wrappers
+ * @property {string} [className] - CSS class for parent
+ * @property {string} [childClassName] - CSS class for children wrappers
+ * @property {boolean} [visible=true] - Controls visibility state
+ * @property {Function} [onComplete] - Callback fired when animation finishes
+ */
 interface Props {
     delay?: number;
     transitionDuration?: number;
@@ -17,6 +47,15 @@ interface Props {
     onComplete?: () => any;
 }
 
+/**
+ * Fade In Component
+ *
+ * Wraps children and applies a staggered fade-in + slide-up animation.
+ *
+ * @component
+ * @param {PropsWithChildren<Props>} props - Component properties
+ * @returns {JSX.Element} Animated container
+ */
 export default function FadeIn(props: PropsWithChildren<Props>) {
     const [maxIsVisible, setMaxIsVisible] = useState(0);
     const transitionDuration = typeof props.transitionDuration === "number" ? props.transitionDuration : 400;

@@ -1,3 +1,30 @@
+/**
+ * @fileoverview Custom Action Button Component
+ *
+ * A custom implementation of a primary action button that mimics Polaris styling
+ * but allows for more granular control over loading states and DOM structure.
+ *
+ * Why Custom?
+ * Standard Polaris PageActions don't always offer the flexibility needed
+ * for specific loading animations or custom class injections required here.
+ *
+ * @module components/PolarisActionButton
+ * @requires react
+ */
+
+/**
+ * Polaris Action Button
+ *
+ * Renders a primary button that toggles between a standard state and a loading state.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.primaryAction - Action configuration
+ * @param {string} props.primaryAction.content - Button text
+ * @param {Function} props.primaryAction.onAction - Click handler
+ * @param {boolean} [props.loading] - Whether to show loading spinner
+ * @returns {JSX.Element} Rendered button
+ */
 export default (props) => {
     const buttonSave =
         <button onClick={props.primaryAction.onAction} className="Polaris-Button Polaris-Button--primary" type="button">

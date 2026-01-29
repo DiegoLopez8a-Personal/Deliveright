@@ -1,7 +1,36 @@
+/**
+ * @fileoverview Polaris Design System Provider
+ *
+ * Configures the Shopify Polaris design system for the application.
+ * It wraps the app with the Polaris AppProvider and injects a custom
+ * Link component to handle navigation correctly within the embedded app context.
+ *
+ * @module providers/PolarisProvider
+ * @requires react
+ * @requires @shopify/polaris
+ */
+
 import { useCallback } from "react";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/build/esm/styles.css";
 
+/**
+ * Custom Link Component for Polaris
+ *
+ * Adapts Polaris navigation to work within the Shopify App Bridge environment.
+ * Handles both internal routing and external links.
+ *
+ * Logic:
+ * - External links: Open in new tab
+ * - Internal links: Handled via window.open (or App Bridge navigation in future)
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.url - Destination URL
+ * @param {React.ReactNode} props.children - Link content
+ * @param {boolean} [props.external] - Force external link behavior
+ * @returns {JSX.Element} Rendered link
+ */
 function AppBridgeLink({ url, children, external, ...rest }) {
   const handleClick = useCallback(() => window.open(url), [url]);
 
@@ -23,24 +52,23 @@ function AppBridgeLink({ url, children, external, ...rest }) {
 }
 
 /**
- * Sets up the AppProvider from Polaris.
- * @desc PolarisProvider passes a custom link component to Polaris.
- * The Link component handles navigation within an embedded app.
- * Prefer using this vs any other method such as an anchor.
- * Use it by importing Link from Polaris, e.g:
+ * Polaris Provider Component
  *
- * ```
- * import {Link} from '@shopify/polaris'
+ * Wraps the application to provide Polaris context and styles.
+ * Configures the custom link component for all Polaris components that use links.
  *
- * function MyComponent() {
- *  return (
- *    <div><Link url="/tab2">Tab 2</Link></div>
- *  )
- * }
- * ```
+ * Usage:
+ * Wrap the root application component with PolarisProvider.
  *
- * PolarisProvider also passes translations to Polaris.
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} App wrapped in Polaris Provider
  *
+ * @example
+ * <PolarisProvider>
+ *   <App />
+ * </PolarisProvider>
  */
 export function PolarisProvider({ children }) {
 

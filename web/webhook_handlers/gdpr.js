@@ -1,11 +1,44 @@
+/**
+ * @fileoverview GDPR Webhook Handlers
+ *
+ * This module defines the mandatory webhook handlers required by Shopify for GDPR compliance.
+ * These webhooks handle requests for customer data access, customer data deletion (redaction),
+ * and shop data deletion.
+ *
+ * Compliance Requirement:
+ * Shopify requires all apps to implement these three webhooks to be listed in the App Store.
+ * They allow merchants and customers to exercise their data rights under GDPR and CCPA.
+ *
+ * Handlers:
+ * - CUSTOMERS_DATA_REQUEST: Provide all data stored for a customer
+ * - CUSTOMERS_REDACT: Delete all data stored for a customer
+ * - SHOP_REDACT: Delete all data stored for a shop (after uninstall)
+ *
+ * @module webhook_handlers/gdpr
+ * @requires @shopify/shopify-api
+ * @see https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks
+ *
+ * @author Deliveright Development Team
+ * @version 1.0.0
+ */
+
 import { DeliveryMethod } from "@shopify/shopify-api";
 
 export default {
   /**
-   * Customers can request their data from a store owner. When this happens,
-   * Shopify invokes this webhook.
+   * Customer Data Request Webhook Handler
    *
-   * https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks#customers-data_request
+   * Invoked when a customer requests their data from a store owner.
+   * The app should return all data it holds about the specified customer.
+   *
+   * Triggered via: Shopify Admin > Customers > Request Data
+   *
+   * @property {Object} CUSTOMERS_DATA_REQUEST
+   * @property {string} CUSTOMERS_DATA_REQUEST.deliveryMethod - HTTP delivery
+   * @property {string} CUSTOMERS_DATA_REQUEST.callbackUrl - /api/webhooks
+   * @property {Function} CUSTOMERS_DATA_REQUEST.callback - Async handler function
+   *
+   * @see https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks#customers-data_request
    */
   CUSTOMERS_DATA_REQUEST: {
     deliveryMethod: DeliveryMethod.Http,
@@ -36,10 +69,19 @@ export default {
   },
 
   /**
-   * Store owners can request that data is deleted on behalf of a customer. When
-   * this happens, Shopify invokes this webhook.
+   * Customer Data Redaction Webhook Handler
    *
-   * https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks#customers-redact
+   * Invoked when a store owner requests deletion of a customer's data.
+   * The app must remove all personal data associated with the customer ID.
+   *
+   * Triggered via: Shopify Admin > Customers > Erase Personal Data
+   *
+   * @property {Object} CUSTOMERS_REDACT
+   * @property {string} CUSTOMERS_REDACT.deliveryMethod - HTTP delivery
+   * @property {string} CUSTOMERS_REDACT.callbackUrl - /api/webhooks
+   * @property {Function} CUSTOMERS_REDACT.callback - Async handler function
+   *
+   * @see https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks#customers-redact
    */
   CUSTOMERS_REDACT: {
     deliveryMethod: DeliveryMethod.Http,
@@ -67,10 +109,19 @@ export default {
   },
 
   /**
-   * 48 hours after a store owner uninstalls your app, Shopify invokes this
-   * webhook.
+   * Shop Data Redaction Webhook Handler
    *
-   * https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks#shop-redact
+   * Invoked 48 hours after a store owner uninstalls the app.
+   * The app should remove all data associated with the shop.
+   *
+   * Triggered via: App Uninstallation
+   *
+   * @property {Object} SHOP_REDACT
+   * @property {string} SHOP_REDACT.deliveryMethod - HTTP delivery
+   * @property {string} SHOP_REDACT.callbackUrl - /api/webhooks
+   * @property {Function} SHOP_REDACT.callback - Async handler function
+   *
+   * @see https://shopify.dev/docs/apps/webhooks/configuration/mandatory-webhooks#shop-redact
    */
   SHOP_REDACT: {
     deliveryMethod: DeliveryMethod.Http,

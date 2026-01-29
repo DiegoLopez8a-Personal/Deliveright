@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Carrier Service Activation Component
+ *
+ * Displays a warning banner and instructional modal when the Carrier Service
+ * is not detected on the shop. Provides a guided walkthrough to enable
+ * third-party carrier shipping (a Shopify requirement) and a button to
+ * activate the integration.
+ *
+ * @module components/CarrierServiceError
+ * @requires react
+ * @requires @shopify/polaris
+ * @requires ../hooks
+ */
+
 import React, {useState} from "react";
 import {
     Modal,
@@ -7,6 +21,16 @@ import {
 import { activateSteps } from "../assets";
 import { useAuthenticatedFetch } from "../hooks";
 
+/**
+ * Attempt to activate the carrier service via API
+ *
+ * @async
+ * @function createCarrier
+ * @param {Function} setToastProps - State setter for toast notifications
+ * @param {Function} afterActivate - Callback to run on success
+ * @param {Function} setLoading - State setter for loading status
+ * @param {Function} fetch - Authenticated fetch instance
+ */
 const createCarrier = async (setToastProps, afterActivate, setLoading, fetch) => {
     setLoading(true)
     try {
@@ -25,6 +49,18 @@ const createCarrier = async (setToastProps, afterActivate, setLoading, fetch) =>
     }
 }
 
+/**
+ * Carrier Service Error Component
+ *
+ * Renders a banner alerting the user that the carrier service is inactive.
+ * Clicking the link opens a modal with step-by-step instructions.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.setToastProps - Toast notification setter
+ * @param {Function} props.afterActivate - Success callback
+ * @returns {JSX.Element} Banner and Modal components
+ */
 export default (props) => {
     const [carrierInstructionsModal, setCarrierInstructionsModal] = useState(false)
     const [loading, setLoading] = useState(false)

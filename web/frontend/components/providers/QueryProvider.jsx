@@ -1,3 +1,13 @@
+/**
+ * @fileoverview React Query Provider
+ *
+ * Configures the TanStack Query client for data fetching and state management.
+ * Sets up the query cache and mutation cache for the application.
+ *
+ * @module providers/QueryProvider
+ * @requires @tanstack/react-query
+ */
+
 import {
   QueryClient,
   QueryClientProvider,
@@ -6,8 +16,17 @@ import {
 } from "@tanstack/react-query";
 
 /**
- * Sets up the QueryClientProvider from react-query.
- * @desc See: https://react-query.tanstack.com/reference/QueryClientProvider#_top
+ * Query Provider Component
+ *
+ * Initializes a new QueryClient instance and provides it to the component tree.
+ * This enables the use of useQuery and useMutation hooks throughout the app.
+ *
+ * @component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {JSX.Element} QueryClientProvider wrapping children
+ *
+ * @see https://tanstack.com/query/latest/docs/react/reference/QueryClientProvider
  */
 export function QueryProvider({ children }) {
   const client = new QueryClient({
